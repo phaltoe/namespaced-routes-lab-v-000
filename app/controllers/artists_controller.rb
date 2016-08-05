@@ -1,6 +1,7 @@
 class ArtistsController < ApplicationController
   def index
-    @artists = Artist.all
+    sort_order = Preference.try(:first).try(:artist_sort_order) || 'desc'
+    @artists = Artist.all.order(name: sort_order)    
   end
 
   def show
@@ -8,6 +9,7 @@ class ArtistsController < ApplicationController
   end
 
   def new
+    redirect_to artists_path, alert: "Not allowed" unless Preference.first.allow_create_artists
     @artist = Artist.new
   end
 
